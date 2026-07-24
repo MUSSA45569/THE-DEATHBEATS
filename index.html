@@ -6,52 +6,114 @@
   <title>Team Biggest Emnys</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       max-width: 600px;
       margin: 40px auto;
       padding: 20px;
-      background-color: #f4f4f9;
-    }
-    h1 {
+      background-color: #f4f6f9;
       color: #333;
-      text-align: center;
     }
-    .card {
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+    h1 {
+      text-align: center;
       margin-bottom: 20px;
     }
+
+    /* Navigation Tabs */
+    .tab-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      background-color: #e2e8f0;
+      color: #4a5568;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .tab-btn.active {
+      background-color: #007bff;
+      color: white;
+    }
+
+    /* Content Card */
+    .card {
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Input & Form Styling */
+    .form-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
     input[type="text"] {
-      width: 70%;
+      flex: 1;
       padding: 10px;
       font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      outline: none;
     }
-    button {
-      padding: 10px 15px;
+
+    .add-btn {
+      padding: 10px 20px;
       font-size: 16px;
       color: white;
-      background-color: #007bff;
+      background-color: #28a745;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
     }
-    button:hover {
-      background-color: #0056b3;
+
+    .add-btn:hover {
+      background-color: #218838;
     }
+
+    /* List Styling */
     ul {
       list-style-type: none;
       padding: 0;
+      margin: 0;
     }
+
     li {
-      padding: 10px;
-      background: #e9ecef;
+      padding: 12px;
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
       margin-top: 8px;
-      border-radius: 4px;
-      font-weight: bold;
+      border-radius: 6px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .empty-msg {
+      color: #94a3b8;
+      text-align: center;
+      font-style: italic;
+    }
+
+    /* Hide sections by default */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
     }
   </style>
 </head>
@@ -59,38 +121,83 @@
 
   <h1>Team Biggest Emnys</h1>
 
-  <div class="card">
-    <h2>Admin Panel</h2>
-    <input type="text" id="nameInput" placeholder="Enter name here...">
-    <button onclick="addName()">Add Name</button>
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="switchTab('public')">Public View</button>
+    <button class="tab-btn" onclick="switchTab('admin')">Admin Panel</button>
   </div>
 
   <div class="card">
-    <h2>Team Members (Public View)</h2>
-    <ul id="teamList">
-      <li>Example Member 1</li>
-      <li>Example Member 2</li>
-    </ul>
+    
+    <div id="public" class="tab-content active">
+      <h2>Team Members</h2>
+      <ul id="publicList"></ul>
+    </div>
+
+    <div id="admin" class="tab-content">
+      <h2>Admin Control</h2>
+      <div class="form-group">
+        <input type="text" id="nameInput" placeholder="Enter member name...">
+        <button class="add-btn" onclick="addName()">Add Name</button>
+      </div>
+      <h3>Current Roster</h3>
+      <ul id="adminList"></ul>
+    </div>
+
   </div>
 
   <script>
+    // Tab switching functionality
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      if (tabName === 'public') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('public').classList.add('active');
+      } else {
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('admin').classList.add('active');
+      }
+      renderLists();
+    }
+
+    // Retrieve saved names from local browser storage
+    function getStoredNames() {
+      return JSON.parse(localStorage.getItem('teamBiggestEmnys')) || [];
+    }
+
+    // Add a new name to the list
     function addName() {
       const input = document.getElementById('nameInput');
-      const nameText = input.value.trim();
+      const name = input.value.trim();
 
-      if (nameText !== "") {
-        const ul = document.getElementById('teamList');
-        const li = document.createElement('li');
-        li.textContent = nameText;
-        ul.appendChild(li);
-        
-        // Clear input field
-        input.value = "";
-      } else {
-        alert("Please enter a valid name.");
+      if (name) {
+        const names = getStoredNames();
+        names.push(name);
+        localStorage.setItem('teamBiggestEmnys', JSON.stringify(names));
+        input.value = '';
+        renderLists();
       }
     }
-  </script>
 
-</body>
-</html>
+    // Render lists in both Public and Admin views
+    function renderLists() {
+      const names = getStoredNames();
+      const publicList = document.getElementById('publicList');
+      const adminList = document.getElementById('adminList');
+
+      publicList.innerHTML = '';
+      adminList.innerHTML = '';
+
+      if (names.length === 0) {
+        publicList.innerHTML = '<li class="empty-msg">No team members added yet.</li>';
+        adminList.innerHTML = '<li class="empty-msg">No team members added yet.</li>';
+        return;
+      }
+
+      names.forEach(name => {
+        const liPublic = document.createElement('li');
+        liPublic.textContent = name;
+        publicList.appendChild(liPublic);
+
+        const li
