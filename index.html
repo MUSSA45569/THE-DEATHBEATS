@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Biggest Emnys</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f4f4f9;
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+    }
+    .card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      width: 70%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      color: white;
+      background-color: #007bff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      padding: 10px;
+      background: #e9ecef;
+      margin-top: 8px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Team Biggest Emnys</h1>
+
+  <div class="card">
+    <h2>Admin Panel</h2>
+    <input type="text" id="nameInput" placeholder="Enter name here...">
+    <button onclick="addName()">Add Name</button>
+  </div>
+
+  <div class="card">
+    <h2>Team Members (Public View)</h2>
+    <ul id="teamList">
+      <li>Example Member 1</li>
+      <li>Example Member 2</li>
+    </ul>
+  </div>
+
+  <script>
+    function addName() {
+      const input = document.getElementById('nameInput');
+      const nameText = input.value.trim();
+
+      if (nameText !== "") {
+        const ul = document.getElementById('teamList');
+        const li = document.createElement('li');
+        li.textContent = nameText;
+        ul.appendChild(li);
+        
+        // Clear input field
+        input.value = "";
+      } else {
+        alert("Please enter a valid name.");
+      }
+    }
+  </script>
+
+</body>
+</html>
